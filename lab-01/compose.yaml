@@ -1,63 +1,51 @@
-version: '3.8'
-
 services:
   app:
     build: .
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      - REDIS_URL=redis://redis:6379/0
-      - PARTNER_URL=http://partner:8080
-    env_file:
-      - .env
+      DATABASE_URL: postgresql://${POSTGRES_USER:-catshop}:${POSTGRES_PASSWORD:-change-me-locally}@db:5432/${POSTGRES_DB:-catshop}
+      PARTNER_URL: http://partner:8080
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_started
       partner:
         condition: service_started
-    restart: always
+    networks:
+      - default
+      - backend
+    restart: unless-stopped
 
   db:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=catshop
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=catshop
+      POSTGRES_USER: ${POSTGRES_USER:-catshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-locally}
+      POSTGRES_DB: ${POSTGRES_DB:-catshop}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U catshop -d catshop"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: always
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
     networks:
-      - internal-net
+      - backend
+    restart: unless-stopped
 
   partner:
     image: wiremock/wiremock:3.6.0
     volumes:
-      - ./partner:/home/wiremock
-    command: ["--local-response-templating"]
-    restart: always
+      - ./partner/mappings:/home/wiremock/mappings:ro
     networks:
-      - internal-net
-
-  redis:
-    image: redis:7-alpine
-    restart: always
-    volumes:
-      - redisdata:/data
+      - backend
+    restart: unless-stopped
 
 volumes:
   pgdata:
-  redisdata:
 
 networks:
   default:
-    name: catshop-default-net
-  internal-net:
-    internal: true
+  backend:
+    internal: true   
