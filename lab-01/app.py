@@ -15,6 +15,10 @@ from pathlib import Path
 
 import requests
 from flask import Flask, jsonify
+import os
+import redis
+
+redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
 
 app = Flask(__name__)
 
