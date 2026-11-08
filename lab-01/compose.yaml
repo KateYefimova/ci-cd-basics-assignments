@@ -16,7 +16,7 @@ services:
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=catshop
-      - POSTGRES_PASSWORD=secretpassword
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=catshop
     volumes:
       - pgdata:/var/lib/postgresql/data
