@@ -1,1 +1,1 @@
-ghcr.io/kateyefimova/catshop-lab-02@sha256:e0ffa358c8a240f1364114296eb7b6bbd6b5ba0aa49ef10a7046eeab996453e5
+ghcr.io/kateyefimova/catshop-lab-02@sha256:70d9bda112d5542eb684556aac512b1f74fe18d79cbae481efc2543d7c0307a3
