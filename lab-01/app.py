@@ -112,7 +112,7 @@ def price(sku):
         # The failure is the interesting part: it is how we see network isolation working.
         return jsonify(sku=sku, error=type(exc).__name__, detail=str(exc)[:200], source=url), 502
 
-
+# test change
 if __name__ == "__main__":
     if DATABASE_URL:
         init_db()
