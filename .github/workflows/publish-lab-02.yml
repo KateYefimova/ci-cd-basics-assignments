@@ -37,9 +37,9 @@ jobs:
     needs: test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write    
-      packages: write    
+    #permissions:
+      #contents: write    
+      #packages: write    
     outputs:
       reference: ${{ steps.ref.outputs.reference }}
     steps:
